@@ -59,4 +59,30 @@ const addTask = () => {
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
 }
 
-document.addEventListener('DOMContentLoaded', loadElements)
+
+const displayTasks = () => {
+    const taskList = document.querySelector('#todo-list');
+    taskLocalList.forEach(element => {
+
+        const li = document.createElement('li');
+        li.classList = 'todo-items';
+
+        const inputCheckBox = document.createElement('input');
+        inputCheckBox.setAttribute('type', 'checkbox')
+        inputCheckBox.classList = 'checkbox';
+
+        const taskText = document.createElement('span');
+        taskText.textContent = element.task;
+
+        const taskDate = document.createElement('span');
+        taskDate.textContent = element.date;
+
+        li.append(inputCheckBox, taskText, taskDate);
+        taskList.appendChild(li);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadElements();
+    displayTasks(); 
+});
