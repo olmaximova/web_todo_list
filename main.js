@@ -3,29 +3,31 @@ const loadElements = () => {
     document.querySelector('body').append(main);
 
     const section = document.createElement('section');
-    document.querySelector('main').append(section);
+    main.append(section);
 
     const h1 = document.createElement('h1');
     h1.textContent = 'To Do List';
-    document.querySelector('section').append(h1);
+    section.append(h1);
 
     const form = document.createElement('form');
-    document.querySelector('section').append(form);
+    section.append(form);
 
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
     input.setAttribute('id', 'inputTask');
     input.setAttribute('placeholder', 'Enter a task');
     input.setAttribute('autocomplete', 'off');
+    input.setAttribute('required', 'true');
 
     const inputDate = document.createElement('input');
     inputDate.setAttribute('type', 'date');
     inputDate.setAttribute('id', 'inputDate');
     inputDate.setAttribute('placeholder', 'Choose date');
     inputDate.setAttribute('autocomplete', 'off');
+    inputDate.setAttribute('required', 'true');
 
-    document.querySelector('form').append(input);
-    document.querySelector('form').append(inputDate);
+    form.append(input);
+    form.append(inputDate);
 
     const addButton = document.createElement('button');
     addButton.setAttribute('id', 'add-button');
@@ -33,12 +35,12 @@ const loadElements = () => {
     const addImg = document.createElement('img');
     addImg.src = 'images/add.png';
 
-    document.querySelector('form').append(addButton);
-    document.querySelector('#add-button').append(addImg);
+    form.append(addButton);
+    addButton.append(addImg);
 
     const ul = document.createElement('ul');
     ul.setAttribute('id', 'todo-list');
-    document.querySelector('section').append(ul);
+    section.append(ul);
 
     addButton.addEventListener('click', addTask);
 
@@ -64,20 +66,45 @@ const displayTasks = () => {
     const taskList = document.querySelector('#todo-list');
     taskLocalList.forEach(element => {
 
+        const taskId = Date.now().toString();
+
         const li = document.createElement('li');
         li.classList = 'todo-items';
 
         const inputCheckBox = document.createElement('input');
         inputCheckBox.setAttribute('type', 'checkbox')
+        inputCheckBox.setAttribute('id', taskId);
         inputCheckBox.classList = 'checkbox';
 
-        const taskText = document.createElement('span');
+        const doneIcon = document.createElement('label');
+        const doneImg = document.createElement('img');
+        doneIcon.classList = 'check-done';
+        doneImg.src = 'images/done.png';
+        doneIcon.append(doneImg)
+
+        const taskText = document.createElement('label');
+        taskText.classList = 'task-text';
+        taskText.setAttribute('for', taskId)
         taskText.textContent = element.task;
 
-        const taskDate = document.createElement('span');
+        const taskDate = document.createElement('label');
+        taskDate.classList = 'task-date';
+        taskDate.setAttribute('for', taskId)
         taskDate.textContent = element.date;
 
-        li.append(inputCheckBox, taskText, taskDate);
+        const deleteIcon = document.createElement('button');
+        const deleteImg = document.createElement('img');
+        deleteIcon.classList = 'task-delete';
+        deleteImg.src = 'images/delete.png';
+        deleteIcon.append(deleteImg)
+
+        const editIcon = document.createElement('button');
+        const editImg = document.createElement('img');
+        editIcon.classList = 'task-edit';
+        editImg.src = 'images/edit.png';
+        editIcon.append(editImg)
+
+        li.append(inputCheckBox, doneIcon, taskText, taskDate, editIcon, deleteIcon);
         taskList.appendChild(li);
     });
 }
