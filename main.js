@@ -46,13 +46,14 @@ const loadElements = () => {
 
 }
 
-const taskLocalList = JSON.parse(localStorage.getItem('taskLocalList')) || [];
+let taskLocalList = JSON.parse(localStorage.getItem('taskLocalList')) || [];
 
 const addTask = () => {
     const task = document.querySelector('#inputTask').value.trim();
     const date = document.querySelector('#inputDate').value;
 
     taskLocalList.push({
+        id: Date.now().toString(),
         task: task,
         date: date,
         completed: false
@@ -66,47 +67,56 @@ const displayTasks = () => {
     const taskList = document.querySelector('#todo-list');
     taskLocalList.forEach(element => {
 
-        const taskId = Date.now().toString();
+        const taskId = element.id;;
 
         const li = document.createElement('li');
-        li.classList = 'todo-items';
+        li.className = 'todo-items';
+        li.dataset.id = element.id;
 
         const inputCheckBox = document.createElement('input');
         inputCheckBox.setAttribute('type', 'checkbox')
         inputCheckBox.setAttribute('id', taskId);
-        inputCheckBox.classList = 'checkbox';
+        inputCheckBox.className = 'checkbox';
 
         const doneIcon = document.createElement('label');
         const doneImg = document.createElement('img');
-        doneIcon.classList = 'check-done';
+        doneIcon.className = 'check-done';
         doneImg.src = 'images/done.png';
         doneIcon.append(doneImg)
 
         const taskText = document.createElement('label');
-        taskText.classList = 'task-text';
+        taskText.className = 'task-text';
         taskText.setAttribute('for', taskId)
         taskText.textContent = element.task;
 
         const taskDate = document.createElement('label');
-        taskDate.classList = 'task-date';
+        taskDate.className = 'task-date';
         taskDate.setAttribute('for', taskId)
         taskDate.textContent = element.date;
 
         const deleteIcon = document.createElement('button');
         const deleteImg = document.createElement('img');
-        deleteIcon.classList = 'task-delete';
+        deleteIcon.className = 'task-delete';
         deleteImg.src = 'images/delete.png';
         deleteIcon.append(deleteImg)
 
+        deleteIcon.addEventListener('click', () => deleteTask(element.id));
+
         const editIcon = document.createElement('button');
         const editImg = document.createElement('img');
-        editIcon.classList = 'task-edit';
+        editIcon.className = 'task-edit';
         editImg.src = 'images/edit.png';
         editIcon.append(editImg)
 
         li.append(inputCheckBox, doneIcon, taskText, taskDate, editIcon, deleteIcon);
         taskList.appendChild(li);
     });
+}
+
+const deleteTask = (taskId) => {
+    taskLocalList = taskLocalList.filter(task => task.id !== taskId);
+    localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
+    document.querySelector(`li[data-id="${taskId}"]`).remove();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
