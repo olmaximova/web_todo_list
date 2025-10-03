@@ -113,8 +113,9 @@ const displayTasks = () => {
 
         const textArea = document.createElement('textarea');
         textArea.className = 'task-area';
-        textArea.disabled = true
+        textArea.disabled = true;
         textArea.textContent = element.task;
+        textArea.dataset.id = taskId;
 
         if (element.completed) {
             textArea.style.textDecoration = 'line-through';
@@ -126,6 +127,7 @@ const displayTasks = () => {
         taskDate.className = 'task-date';
         taskDate.setAttribute('for', taskId)
         taskDate.textContent = element.date;
+        taskDate.dataset.id = taskId;
 
         const taskStatus = document.createElement('td');
         taskStatus.className = 'task-status';
@@ -152,6 +154,8 @@ const displayTasks = () => {
         editIcon.className = 'task-edit';
         editImg.src = 'images/edit.png';
         editIcon.append(editImg)
+
+        editIcon.addEventListener('click', () => editTaskDate(element.id));
 
         const taskDoneTable = document.createElement('td');
         taskDoneTable.className = 'task-done';
@@ -193,6 +197,40 @@ const deleteTask = (taskId) => {
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
     displayTasks();
 }
+
+
+const editTaskDate = (taskId) => {
+    const taskIndex = taskLocalList.findIndex(task => task.id === taskId);
+    
+    const textToChange = document.querySelector(`.task-area[data-id="${taskId}"]`);
+    const dateToChange = document.querySelector(`.task-date[data-id="${taskId}"]`);
+    
+    if (textToChange.disabled) {
+        textToChange.disabled = false;
+
+        const currentDate = dateToChange.textContent;
+        const dateInput = document.createElement('input');
+        dateInput.type = 'date';
+        dateInput.value = currentDate;
+        dateInput.className = 'date-to-edit';
+        dateInput.dataset.id = taskId;
+        dateToChange.replaceChildren(dateInput);
+    } else {
+        textToChange.disabled = true;
+        taskLocalList[taskIndex].task = textToChange.value.trim();
+        
+        const dateInput = dateToChange.querySelector('.date-to-edit');
+        if (dateInput) {
+            taskLocalList[taskIndex].date = dateInput.value;
+            dateTextValue = document.createTextNode(dateInput.value);
+            dateToChange.replaceChildren(dateTextValue); 
+        }
+        
+        localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
+        displayTasks();
+    }
+}
+
 
 const taskDone = (taskId) => {
     const taskIndex = taskLocalList.findIndex(task => task.id === taskId);
