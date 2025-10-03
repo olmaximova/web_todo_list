@@ -39,9 +39,27 @@ const loadElements = () => {
     form.append(addButton);
     addButton.append(addImg);
 
-    const ul = document.createElement('ul');
-    ul.setAttribute('id', 'todo-list');
-    section.append(ul);
+    const table = document.createElement('table');
+    table.setAttribute('id', 'todo-table');
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    const headers = ['№', 'Task', 'Date', 'Status', 'Actions', 'Mark Done'];
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.append(th);
+    });
+
+    thead.append(headerRow);
+    table.append(thead);
+
+    const tbody = document.createElement('tbody');
+    tbody.setAttribute('id', 'todo-tbody');
+    table.append(tbody);
+
+    section.append(table);
 
     form.addEventListener('submit', (event) => {
         event.preventDefault();
@@ -70,35 +88,26 @@ const addTask = () => {
 
 
 const displayTasks = () => {
-    const taskList = document.querySelector('#todo-list');
+    const tasksTable = document.querySelector('#todo-tbody');
 
     // иначе некоторые задачи дублируются после того, как нажать на кнопку добавить
-    while (taskList.firstChild) {
-        taskList.removeChild(taskList.firstChild);
+    while (tasksTable.firstChild) {
+        tasksTable.removeChild(tasksTable.firstChild);
     }
 
-    taskLocalList.forEach(element => {
+    taskLocalList.forEach((element, index) => {
 
         const taskId = element.id;
 
-        const li = document.createElement('li');
-        li.className = 'todo-items';
-        li.dataset.id = element.id;
+        const row = document.createElement('tr');
+        row.className = 'todo-items';
+        row.dataset.id = element.id;
 
-        const inputCheckBox = document.createElement('input');
-        inputCheckBox.setAttribute('type', 'checkbox')
-        inputCheckBox.setAttribute('id', taskId);
-        inputCheckBox.className = 'checkbox';
+        const taskNumber = document.createElement('td');
+        taskNumber.className = 'task-number';
+        taskNumber.textContent = index + 1;
 
-        inputCheckBox.addEventListener('change', () => taskDone(element.id))
-
-        const doneIcon = document.createElement('label');
-        const doneImg = document.createElement('img');
-        doneIcon.className = 'check-done';
-        doneImg.src = 'images/done.png';
-        doneIcon.append(doneImg)
-
-        const taskText = document.createElement('label');
+        const taskText = document.createElement('td');
         taskText.className = 'task-text';
         taskText.setAttribute('for', taskId)
 
@@ -113,10 +122,22 @@ const displayTasks = () => {
 
         taskText.append(textArea);
 
-        const taskDate = document.createElement('label');
+        const taskDate = document.createElement('td');
         taskDate.className = 'task-date';
         taskDate.setAttribute('for', taskId)
         taskDate.textContent = element.date;
+
+        const taskStatus = document.createElement('td');
+        taskStatus.className = 'task-status';
+
+        const statusLabel = document.createElement('label');
+        statusLabel.setAttribute('for', taskId);
+        statusLabel.textContent = element.completed ? 'Completed' : 'Pending'
+
+        taskStatus.append(statusLabel);
+
+        const taskActions = document.createElement('td');
+        taskActions.className = 'task-actions';
 
         const deleteIcon = document.createElement('button');
         const deleteImg = document.createElement('img');
@@ -132,15 +153,45 @@ const displayTasks = () => {
         editImg.src = 'images/edit.png';
         editIcon.append(editImg)
 
-        li.append(inputCheckBox, doneIcon, taskText, taskDate, editIcon, deleteIcon);
-        taskList.appendChild(li);
+        const taskDoneTable = document.createElement('td');
+        taskDoneTable.className = 'task-done';
+
+        const inputCheckBox = document.createElement('input');
+        inputCheckBox.setAttribute('type', 'checkbox')
+        inputCheckBox.setAttribute('id', taskId);
+        inputCheckBox.className = 'checkbox';
+        inputCheckBox.checked = element.completed;
+
+        inputCheckBox.addEventListener('change', () => taskDone(element.id))
+
+        const doneIcon = document.createElement('label');
+        doneIcon.setAttribute('for', taskId);
+        const doneImg = document.createElement('img');
+        doneIcon.className = 'check-done';
+        doneImg.src = 'images/done.png';
+        doneIcon.append(doneImg)
+
+        taskDoneTable.append(inputCheckBox);
+        taskDoneTable.append(doneIcon);
+
+        taskActions.append(editIcon);
+        taskActions.append(deleteIcon);
+
+        row.append(taskNumber);
+        row.append(taskText);
+        row.append(taskDate);
+        row.append(taskStatus);
+        row.append(taskActions);
+        row.append(taskDoneTable);
+
+        tasksTable.append(row);
     });
 }
 
 const deleteTask = (taskId) => {
     taskLocalList = taskLocalList.filter(task => task.id !== taskId);
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
-    document.querySelector(`li[data-id="${taskId}"]`).remove();
+    displayTasks();
 }
 
 const taskDone = (taskId) => {
