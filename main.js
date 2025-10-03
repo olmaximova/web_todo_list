@@ -79,7 +79,7 @@ const displayTasks = () => {
 
     taskLocalList.forEach(element => {
 
-        const taskId = element.id;;
+        const taskId = element.id;
 
         const li = document.createElement('li');
         li.className = 'todo-items';
@@ -106,6 +106,10 @@ const displayTasks = () => {
         textArea.className = 'task-area';
         textArea.disabled = true
         textArea.textContent = element.task;
+
+        if (element.completed) {
+            textArea.style.textDecoration = 'line-through';
+        } 
 
         taskText.append(textArea);
 
@@ -147,6 +151,7 @@ const taskDone = (taskId) => {
         taskLocalList[taskIndex].completed = false;
     }
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
+    displayTasks();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
