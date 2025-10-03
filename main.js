@@ -31,6 +31,7 @@ const loadElements = () => {
 
     const addButton = document.createElement('button');
     addButton.setAttribute('id', 'add-button');
+    addButton.setAttribute('type', 'submit');
     
     const addImg = document.createElement('img');
     addImg.src = 'images/add.png';
@@ -42,7 +43,10 @@ const loadElements = () => {
     ul.setAttribute('id', 'todo-list');
     section.append(ul);
 
-    addButton.addEventListener('click', addTask);
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        addTask();
+    });
 
 }
 
@@ -60,11 +64,19 @@ const addTask = () => {
     });
 
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
+    displayTasks();
+    document.querySelector("form").reset();
 }
 
 
 const displayTasks = () => {
     const taskList = document.querySelector('#todo-list');
+
+    // иначе некоторые задачи дублируются после того, как нажать на кнопку добавить
+    while (taskList.firstChild) {
+        taskList.removeChild(taskList.firstChild);
+    }
+
     taskLocalList.forEach(element => {
 
         const taskId = element.id;;
@@ -78,6 +90,8 @@ const displayTasks = () => {
         inputCheckBox.setAttribute('id', taskId);
         inputCheckBox.className = 'checkbox';
 
+        inputCheckBox.addEventListener('change', () => taskDone(element.id))
+
         const doneIcon = document.createElement('label');
         const doneImg = document.createElement('img');
         doneIcon.className = 'check-done';
@@ -87,7 +101,13 @@ const displayTasks = () => {
         const taskText = document.createElement('label');
         taskText.className = 'task-text';
         taskText.setAttribute('for', taskId)
-        taskText.textContent = element.task;
+
+        const textArea = document.createElement('textarea');
+        textArea.className = 'task-area';
+        textArea.disabled = true
+        textArea.textContent = element.task;
+
+        taskText.append(textArea);
 
         const taskDate = document.createElement('label');
         taskDate.className = 'task-date';
@@ -117,6 +137,16 @@ const deleteTask = (taskId) => {
     taskLocalList = taskLocalList.filter(task => task.id !== taskId);
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
     document.querySelector(`li[data-id="${taskId}"]`).remove();
+}
+
+const taskDone = (taskId) => {
+    const taskIndex = taskLocalList.findIndex(task => task.id === taskId);
+    if (taskLocalList[taskIndex].completed == false){
+        taskLocalList[taskIndex].completed = true;
+    } else{
+        taskLocalList[taskIndex].completed = false;
+    }
+    localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
