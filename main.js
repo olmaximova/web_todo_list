@@ -34,6 +34,12 @@ const loadElements = () => {
     const addImg = document.createElement('img');
     addImg.src = 'images/add.png';
 
+    const searchButton = document.createElement('button');
+    searchButton.setAttribute('id', 'search-button');
+
+    const searchImg = document.createElement('img');
+    searchImg.src = 'images/search.png';
+
     const table = document.createElement('table');
     table.setAttribute('id', 'todo-table');
 
@@ -57,6 +63,8 @@ const loadElements = () => {
     form.append(input, inputDate);
     form.append(addButton);
     addButton.append(addImg);
+    form.append(searchButton);
+    searchButton.append(searchImg);
     table.append(thead);
     thead.append(headerRow);
     const headers = ['№', 'Task', 'Date', 'Status', 'Actions', 'Mark Done'];
@@ -77,6 +85,7 @@ const loadElements = () => {
     styleInput(input);
     styleInputDate(inputDate);
     styleAddButton(addButton);
+    styleAddButton(searchButton);
 }
 
 let taskLocalList = JSON.parse(localStorage.getItem('taskLocalList')) || [];
