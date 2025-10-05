@@ -1,19 +1,32 @@
 const styleMain = (main) => {
     main.style.display = 'flex';
-    main.style.justifyContent = 'center';
-    main.style.alignItems = 'center';
     main.style.flexDirection = 'column';
-    main.style.width = '100%';
+    main.style.width = 'calc(100% - 250px)';
+    main.style.minHeight = '100vh';
+    main.style.alignItems = 'flex-start';
+    main.style.marginLeft = '250px';
+    main.style.boxSizing = 'border-box';
 }
 
 const styleBody = (body) => {
     body.style.minHeight = '100vh';
-    body.style.display = 'flex';
-    body.style.alignItems = 'center';
-    body.style.flexDirection = 'column';
-    body.style.padding = '10px';
+    body.style.padding = '0';
     body.style.margin = '0';
-    body.style.backgroundColor = '#E8E6E6';
+    // body.style.backgroundColor = '#E8E6E6';
+}
+
+const styleSidebar = (sidebar) => {
+    sidebar.style.position = 'fixed';
+    sidebar.style.top = '0';
+    sidebar.style.left = '0';
+    sidebar.style.height = '100%';
+    sidebar.style.width = '250px';
+    sidebar.style.background = '#F7F7F7';
+    
+}
+
+const styleSideBarImg = (img) => {
+    img.style.width = '40px';
 }
 
 const styleH1 = (h1) => {
@@ -35,17 +48,18 @@ const styleDateSpan = (span) => {
 };
 
 const styleSection = (section) => {
-    section.style.width = 'min(95%, 900px)';
+    section.style.width = '100%';
+    section.style.minHeight = '100vh';
     section.style.display = 'flex';
     section.style.flexDirection = 'column';
     section.style.gap = '15px';
-    section.style.border = '2px solid grey';
-    section.style.borderRadius = '10px';
-    section.style.boxShadow = '0 .5rem 1rem rgba(0, 0, 0, 0.1)';
+    // section.style.border = '2px solid grey';
+    // section.style.borderRadius = '10px';
+    // section.style.boxShadow = '0 .5rem 1rem rgba(0, 0, 0, 0.1)';
     section.style.padding = 'clamp(15px, 3vw, 25px)';
     section.style.boxSizing = 'border-box';
     section.style.backgroundColor = 'white';
-    section.style.margin = '10px 0';
+    // section.style.margin = '10px 0';
 }
 
 const styleForm = (form) => {

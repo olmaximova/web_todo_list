@@ -1,8 +1,16 @@
 const loadElements = () => {
     const main = document.createElement('main');
     const body = document.querySelector('body');
-    
+
     const section = document.createElement('section');
+
+    const nav = document.createElement('nav');
+    nav.className = 'sidebar';
+
+    const header = document.createElement('header');
+    const headerImg = document.createElement('img');
+    headerImg.src = 'images/favicon.png';
+
 
     const h1 = document.createElement('h1');
     h1.textContent = 'To Do List';
@@ -56,6 +64,9 @@ const loadElements = () => {
 
     body.append(main);
     main.append(section);
+    section.append(nav);
+    nav.append(header);
+    header.append(headerImg);
     section.append(h1);
     section.append(dateContainer);
     section.append(form);
@@ -79,6 +90,8 @@ const loadElements = () => {
     styleMain(main);
     styleBody(document.body);
     styleSection(section);
+    styleSidebar(nav);
+    styleSideBarImg(headerImg);
     styleH1(h1);
     styleDateSpan(dateContainer);
     styleForm(form);
@@ -86,6 +99,7 @@ const loadElements = () => {
     styleInputDate(inputDate);
     styleAddButton(addButton);
     styleAddButton(searchButton);
+    // searchButton.addEventListener('click', searchTask);
 }
 
 let taskLocalList = JSON.parse(localStorage.getItem('taskLocalList')) || [];
