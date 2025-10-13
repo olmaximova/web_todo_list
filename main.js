@@ -4,13 +4,7 @@ const loadElements = () => {
 
     const section = document.createElement('section');
 
-    const nav = document.createElement('nav');
-    nav.className = 'sidebar';
-
-    const header = document.createElement('header');
-    const headerImg = document.createElement('img');
-    headerImg.src = 'images/favicon.png';
-
+    const sidebar = createSidebar();
 
     const h1 = document.createElement('h1');
     h1.textContent = 'To Do List';
@@ -20,6 +14,7 @@ const loadElements = () => {
     dateContainer.textContent = curDateTime;
     
     const form = document.createElement('form');
+    form.style.display = 'none';
     
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
@@ -36,6 +31,12 @@ const loadElements = () => {
     inputDate.setAttribute('required', 'true');
 
     const addButton = document.createElement('button');
+    addButton.setAttribute('id', 'add-button');
+    addButton.setAttribute('type', 'submit');
+    const addBtnIcon = document.createElement('i');
+    addBtnIcon.className = 'fa-solid fa-plus';
+    addBtnIcon.style.color =  '#000000'
+
     addButton.setAttribute('id', 'add-button');
     addButton.setAttribute('type', 'submit');
     
@@ -63,17 +64,16 @@ const loadElements = () => {
     });
 
     body.append(main);
+    body.append(sidebar);
     main.append(section);
-    section.append(nav);
-    nav.append(header);
-    header.append(headerImg);
     section.append(h1);
     section.append(dateContainer);
     section.append(form);
     section.append(table); 
     form.append(input, inputDate);
     form.append(addButton);
-    addButton.append(addImg);
+    // addButton.append(addImg);
+    addButton.append(addBtnIcon)
     form.append(searchButton);
     searchButton.append(searchImg);
     table.append(thead);
@@ -90,8 +90,6 @@ const loadElements = () => {
     styleMain(main);
     styleBody(document.body);
     styleSection(section);
-    styleSidebar(nav);
-    styleSideBarImg(headerImg);
     styleH1(h1);
     styleDateSpan(dateContainer);
     styleForm(form);
@@ -101,6 +99,66 @@ const loadElements = () => {
     styleAddButton(searchButton);
     // searchButton.addEventListener('click', searchTask);
 }
+
+const createSidebar = () => {
+    const nav = document.createElement('nav');
+    nav.className = 'sidebar';
+
+    const header = document.createElement('header');
+    header.className = 'sidebarHeader'
+
+    const logo = document.createElement('div');
+    logo.className = 'sidebarLogo'
+
+    const logoText = document.createElement('div');
+    logoText.textContent = 'ToDo List';
+
+    const logoImg = document.createElement('img');
+    logoImg.src = 'images/favicon.png';
+
+    logo.append(logoImg, logoText);
+
+    header.append(logo);
+
+    const menuBar = document.createElement('div');
+    menuBar.className = 'sidebarMenu';
+
+    const menuItems = [
+        { id: 'add-task', text: 'add task', icon: 'fa-solid fa-plus'},
+        { id: 'search-task', text: 'search task', icon: 'fa-solid fa-magnifying-glass' },
+        { id: 'view-all', text: 'due today', icon: 'fa-regular fa-calendar' },
+        { id: 'view-pending', text: 'upcoming', icon: 'fa-regular fa-calendar-days' },
+    ];
+
+    menuItems.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'sidebar-menu-item';
+        menuItem.id = item.id;
+        
+        const menuIcon = document.createElement('span');
+        menuIcon.className = 'menu-icon';
+        menuIcon.className = item.icon;
+        
+        const menuText = document.createElement('span');
+        menuText.className = 'menu-text';
+        menuText.textContent = item.text;
+        
+        menuItem.append(menuIcon, menuText);
+        menuBar.append(menuItem);
+    });
+
+    nav.append(header, menuBar);
+
+    styleSidebar(nav);
+    styleSidebarHeader(header);
+    styleSidebarLogo(logo);
+    styleSideBarImg(logoImg);
+    styleSidebarMenu(menuBar);
+    const menuItemElements = nav.querySelectorAll('.sidebar-menu-item');
+    styleSidebarMenuItem(menuItemElements);
+    return nav;
+}
+
 
 let taskLocalList = JSON.parse(localStorage.getItem('taskLocalList')) || [];
 
