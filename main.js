@@ -15,39 +15,6 @@ const loadElements = () => {
     
     const form = document.createElement('form');
     form.style.display = 'none';
-    
-    const input = document.createElement('input');
-    input.setAttribute('type', 'text');
-    input.setAttribute('id', 'inputTask');
-    input.setAttribute('placeholder', 'Enter a task');
-    input.setAttribute('autocomplete', 'off');
-    input.setAttribute('required', 'true');
-
-    const inputDate = document.createElement('input');
-    inputDate.setAttribute('type', 'date');
-    inputDate.setAttribute('id', 'inputDate');
-    inputDate.setAttribute('placeholder', 'Choose date');
-    inputDate.setAttribute('autocomplete', 'off');
-    inputDate.setAttribute('required', 'true');
-
-    const addButton = document.createElement('button');
-    addButton.setAttribute('id', 'add-button');
-    addButton.setAttribute('type', 'submit');
-    const addBtnIcon = document.createElement('i');
-    addBtnIcon.className = 'fa-solid fa-plus';
-    addBtnIcon.style.color =  '#000000'
-
-    addButton.setAttribute('id', 'add-button');
-    addButton.setAttribute('type', 'submit');
-    
-    const addImg = document.createElement('img');
-    addImg.src = 'images/add.png';
-
-    const searchButton = document.createElement('button');
-    searchButton.setAttribute('id', 'search-button');
-
-    const searchImg = document.createElement('img');
-    searchImg.src = 'images/search.png';
 
     const table = document.createElement('table');
     table.setAttribute('id', 'todo-table');
@@ -70,12 +37,6 @@ const loadElements = () => {
     section.append(dateContainer);
     section.append(form);
     section.append(table); 
-    form.append(input, inputDate);
-    form.append(addButton);
-    // addButton.append(addImg);
-    addButton.append(addBtnIcon)
-    form.append(searchButton);
-    searchButton.append(searchImg);
     table.append(thead);
     thead.append(headerRow);
     const headers = ['№', 'Task', 'Date', 'Status', 'Actions', 'Mark Done'];
@@ -93,11 +54,6 @@ const loadElements = () => {
     styleH1(h1);
     styleDateSpan(dateContainer);
     styleForm(form);
-    styleInput(input);
-    styleInputDate(inputDate);
-    styleAddButton(addButton);
-    styleAddButton(searchButton);
-    // searchButton.addEventListener('click', searchTask);
 }
 
 const createSidebar = () => {
@@ -126,25 +82,27 @@ const createSidebar = () => {
     const menuItems = [
         { id: 'add-task', text: 'add task', icon: 'fa-solid fa-plus'},
         { id: 'search-task', text: 'search task', icon: 'fa-solid fa-magnifying-glass' },
-        { id: 'view-all', text: 'due today', icon: 'fa-regular fa-calendar' },
-        { id: 'view-pending', text: 'upcoming', icon: 'fa-regular fa-calendar-days' },
+        { id: 'view-due-today', text: 'due today', icon: 'fa-regular fa-calendar' },
+        { id: 'view-upcoming', text: 'upcoming', icon: 'fa-regular fa-calendar-days' },
     ];
 
     menuItems.forEach(item => {
         const menuItem = document.createElement('div');
-        menuItem.className = 'sidebar-menu-item';
+        menuItem.className = 'sidebarMenuItem';
         menuItem.id = item.id;
         
         const menuIcon = document.createElement('span');
-        menuIcon.className = 'menu-icon';
+        menuIcon.className = 'menuIcon';
         menuIcon.className = item.icon;
         
         const menuText = document.createElement('span');
-        menuText.className = 'menu-text';
+        menuText.className = 'menuText';
         menuText.textContent = item.text;
         
         menuItem.append(menuIcon, menuText);
         menuBar.append(menuItem);
+
+        addMenuItemEventListeners(menuItem, item.id);
     });
 
     nav.append(header, menuBar);
@@ -154,11 +112,120 @@ const createSidebar = () => {
     styleSidebarLogo(logo);
     styleSideBarImg(logoImg);
     styleSidebarMenu(menuBar);
-    const menuItemElements = nav.querySelectorAll('.sidebar-menu-item');
+    const menuItemElements = nav.querySelectorAll('.sidebarMenuItem');
     styleSidebarMenuItem(menuItemElements);
     return nav;
 }
 
+function addMenuItemEventListeners(menuItem, itemID){
+    menuItem.addEventListener('click', () => {
+        switch(itemID) {
+            case 'add-task':
+                openAddTaskModal();
+                break;
+            case 'search-task':
+                openSearchModal();
+                break;
+            case 'view-due-today':
+                showDueTodayTasks();
+                break;
+            case 'view-upcoming':
+                showUpcomingTasks();
+                break;
+        }
+    })
+}
+
+const openAddTaskModal = () => {
+    const modal = document.createElement('div');
+    modal.className = 'addTaskModal';
+    modal.id = 'add-task-modal';
+    
+    const modalInner = document.createElement('div');
+    modalInner.className = 'modalInner';
+    
+    const modalTitle = document.createElement('h2');
+    modalTitle.textContent = 'Add New Task';
+
+    const taskForm = document.createElement('form');
+    taskForm.id = 'task-form';
+    
+    const taskInputGroup = document.createElement('div');
+    taskInputGroup.className = 'formElements';
+    
+    const taskLabel = document.createElement('label');
+    taskLabel.setAttribute('for', 'inputTask');
+    taskLabel.textContent = 'Enter a task:';
+    
+    const taskInput = document.createElement('input'); 
+    taskInput.type = 'text';
+    taskInput.id = 'inputTask';
+    taskInput.setAttribute('autocomplete', 'off');
+    taskInput.setAttribute('required', 'true');
+    taskInput.placeholder = 'Enter your task here';
+    
+    taskInputGroup.append(taskLabel, taskInput);
+    
+    const dateGroup = document.createElement('div');
+    dateGroup.className = 'formElements';
+    
+    const dateLabel = document.createElement('label');
+    dateLabel.setAttribute('for', 'inputDate');
+    dateLabel.textContent = 'Due Date:';
+    
+    const inputDate = document.createElement('input');
+    inputDate.type = 'date';
+    inputDate.id = 'inputDate';
+    inputDate.name = 'task-date';
+    inputDate.required = true;
+    inputDate.setAttribute('autocomplete', 'off');
+    
+    dateGroup.append(dateLabel, inputDate);    
+
+    const formButtons = document.createElement('div');
+    formButtons.className = 'form-buttons';
+    
+    const submitButton = document.createElement('button');
+    submitButton.type = 'submit';
+    submitButton.className = 'btn-primary';
+    submitButton.textContent = 'Add Task';
+    
+    const cancelButton = document.createElement('button');
+    cancelButton.type = 'button';
+    cancelButton.className = 'btn-secondary';
+    cancelButton.id = 'cancel-btn';
+    cancelButton.textContent = 'Cancel';
+    
+    formButtons.append(submitButton, cancelButton);
+    taskForm.append(taskInputGroup, dateGroup, formButtons);
+    modalInner.append(modalTitle, taskForm);
+    modal.append(modalInner);
+
+    const body = document.querySelector('body');
+    body.append(modal);
+    
+    styleModal(modal);
+    
+    modal.style.display = 'block';
+    
+    cancelButton.addEventListener('click', closeModal);
+    
+    taskForm.addEventListener('submit', handleTaskSubmit);
+    
+    function closeModal(){
+        modal.style.display = 'none';
+        setTimeout(() => {
+            if (modal.parentNode) {
+                modal.parentNode.removeChild(modal);
+            }}, 300);
+    }
+    
+    function handleTaskSubmit(event){
+        event.preventDefault();
+        addTask();
+        closeModal();
+    }
+}
 
 let taskLocalList = JSON.parse(localStorage.getItem('taskLocalList')) || [];
 
