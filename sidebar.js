@@ -22,10 +22,10 @@ const createSidebar = () => {
     menuBar.className = 'sidebarMenu';
 
     const menuItems = [
-        { id: 'add-task', text: 'add task', icon: 'fa-solid fa-plus'},
-        { id: 'search-task', text: 'search task', icon: 'fa-solid fa-magnifying-glass' },
-        { id: 'view-due-today', text: 'due today', icon: 'fa-regular fa-calendar' },
-        { id: 'view-upcoming', text: 'upcoming', icon: 'fa-regular fa-calendar-days' },
+        { id: 'add-task', text: 'add task', icon: 'images/add.png'},
+        { id: 'search-task', text: 'search task', icon: 'images/search.png' },
+        { id: 'view-due-today', text: 'due today', icon: 'images/calendar_clock.png' },
+        { id: 'view-upcoming', text: 'upcoming', icon: 'images/calendar_month.png' }, 
     ];
 
     menuItems.forEach(item => {
@@ -33,9 +33,9 @@ const createSidebar = () => {
         menuItem.className = 'sidebarMenuItem';
         menuItem.id = item.id;
         
-        const menuIcon = document.createElement('span');
+        const menuIcon = document.createElement('img');
         menuIcon.className = 'menuIcon';
-        menuIcon.className = item.icon;
+        menuIcon.src = item.icon;
         
         const menuText = document.createElement('span');
         menuText.className = 'menuText';
@@ -187,3 +187,37 @@ const addTask = () => {
     document.querySelector("form").reset();
 }
 
+const openSearchModal = () =>{
+    const inputDiv = document.createElement('div');
+    inputDiv.className = 'inputGroup';
+
+    const inputSearch = document.createElement('input');
+    inputSearch.className = 'searchTask';
+    inputSearch.type = 'search';
+    inputSearch.placeholder = 'Search Your Task Here';
+
+    const searchIcon = document.createElement('img');
+    searchIcon.src = 'images/search.png';
+    
+    const table = document.querySelector('table');
+
+    table.parentNode.insertBefore(inputDiv, table);
+    inputDiv.append(inputSearch, searchIcon);
+
+    inputSearch.addEventListener('input', function() {
+        searchTasks(this.value);
+    });
+}
+
+function searchTasks(searchInpt) {
+    const tableRows = document.querySelectorAll('tbody tr');
+
+    tableRows.forEach((row) => {
+        const taskArea = row.querySelector('.task-area');
+        if (taskArea) {
+            const rowText = taskArea.textContent.toLowerCase();
+            const searchText = searchInpt.toLowerCase();
+            row.classList.toggle('hide', rowText.indexOf(searchText) < 0);
+        }
+    });
+}
