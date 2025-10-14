@@ -3,6 +3,7 @@ const loadElements = () => {
     const body = document.querySelector('body');
 
     const section = document.createElement('section');
+    section.className = 'taskSection';
 
     const sidebar = createSidebar();
 
@@ -107,16 +108,16 @@ const displayTasks = () => {
         taskActions.className = 'task-actions';
 
         const deleteIcon = document.createElement('button');
-        const deleteImg = document.createElement('div');
+        const deleteImg = document.createElement('img');
         deleteIcon.className = 'task-delete';
-        deleteImg.className = 'fa-regular fa-trash-can';
+        deleteImg.src = 'images/delete.png';
         
         deleteIcon.addEventListener('click', () => deleteTask(element.id));
 
         const editIcon = document.createElement('button');
-        const editImg = document.createElement('div');
+        const editImg = document.createElement('img');
         editIcon.className = 'task-edit';
-        editImg.className = 'fa-solid fa-pen';
+        editImg.src = 'images/edit.png';
         
         editIcon.addEventListener('click', () => editTaskDate(element.id));
 
