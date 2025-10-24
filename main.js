@@ -44,18 +44,51 @@ const loadElements = () => {
     headers.forEach(header => {
         const th = document.createElement('th');
         th.textContent = header;
-        styleTableHeaders(th);
+        if (header == 'Status'){
+            const select = document.createElement('select');
+            select.className = 'selectFilter';
+            const options = [
+                // {value: 'blank', text: ''},
+                {value: 'all', text: 'All'},
+                {value: 'pending', text: 'Pending'},
+                {value: 'completed', text: 'Completed'}
+            ]
+            options.forEach(opt => {
+                const option = document.createElement('option');
+                option.value = opt.value;
+                option.textContent = opt.text;
+                select.appendChild(option);
+            });
+            select.addEventListener('change', filterTasks);
+            th.append(select);
+        }
         headerRow.append(th);
     });
     table.append(tbody); 
-
-    styleMain(main);
-    styleBody(document.body);
-    styleSection(section);
-    styleH1(h1);
-    styleDateSpan(dateContainer);
-    styleForm(form);
 }
+
+const filterTasks = (event) => {
+    const status = event.target.value;
+    const tasksTable = document.getElementById('todo-tbody');
+    const allRows = tasksTable.querySelectorAll('.todo-items');
+    
+    allRows.forEach(row => {
+        const statusLabel = row.querySelector('.task-status label');
+        const isCompleted = statusLabel.textContent.toLowerCase() === 'completed';
+        
+        switch(status) {
+            case 'completed':
+                row.style.display = isCompleted ? '' : 'none';
+                break;
+            case 'pending':
+                row.style.display = isCompleted ? 'none' : '';
+                break;
+            default: 
+                row.style.display = '';
+                break;
+        }
+    });
+};
 
 const displayTasks = () => {
     const tasksTable = document.querySelector('#todo-tbody');
@@ -152,15 +185,8 @@ const displayTasks = () => {
         taskActions.append(editIcon, deleteIcon);
         row.append(taskNumber, taskText, taskDate, taskStatus,taskActions, taskDoneTable);
         tasksTable.append(row);
-
-        [taskNumber, taskText, taskDate, taskStatus, taskActions, taskDoneTable].forEach(td => {
-            styleTableCell(td);
-        });
-        styleActionsBtn(deleteIcon);
-        styleActionsBtn(editIcon);
         styleCheckboxIcon(doneIcon, element.completed);
         styleStatusLabel(statusLabel, element.completed);
-        styleTextArea(textArea);
     });
 }
 
