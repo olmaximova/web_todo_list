@@ -40,7 +40,7 @@ const loadElements = () => {
     section.append(table); 
     table.append(thead);
     thead.append(headerRow);
-    const headers = ['№', 'Task', 'Date', 'Status', 'Actions', 'Mark Done'];
+    const headers = ['Mark Done', 'Task', 'Date', 'Status', 'Actions'];
     headers.forEach(header => {
         const th = document.createElement('th');
         th.textContent = header;
@@ -48,7 +48,6 @@ const loadElements = () => {
             const select = document.createElement('select');
             select.className = 'selectFilter';
             const options = [
-                // {value: 'blank', text: ''},
                 {value: 'all', text: 'All'},
                 {value: 'pending', text: 'Pending'},
                 {value: 'completed', text: 'Completed'}
@@ -62,6 +61,14 @@ const loadElements = () => {
             select.addEventListener('change', filterTasks);
             th.append(select);
         }
+
+        if (header === 'Date'){
+            th.className = 'sortable-header';    
+            th.addEventListener('click', () => {
+                handleDateHeaderClick();
+            });
+        } 
+
         headerRow.append(th);
     });
     table.append(tbody); 
@@ -106,10 +113,6 @@ const displayTasks = () => {
         row.className = 'todo-items';
         row.dataset.id = element.id;
 
-        const taskNumber = document.createElement('td');
-        taskNumber.className = 'task-number';
-        taskNumber.textContent = index + 1;
-
         const taskText = document.createElement('td');
         taskText.className = 'task-text';
         taskText.setAttribute('for', taskId)
@@ -121,7 +124,8 @@ const displayTasks = () => {
         textArea.dataset.id = taskId;
 
         if (element.completed) {
-            textArea.style.textDecoration = 'line-through';
+            textArea.style.textDecoration = 'solid line-through black 2px';
+            textArea.style.color = "grey"
         } 
         
         const taskDate = document.createElement('td');
@@ -183,7 +187,7 @@ const displayTasks = () => {
         doneIcon.append(doneImg);
         taskDoneTable.append(inputCheckBox, doneIcon);
         taskActions.append(editIcon, deleteIcon);
-        row.append(taskNumber, taskText, taskDate, taskStatus,taskActions, taskDoneTable);
+        row.append(taskDoneTable, taskText, taskDate, taskStatus,taskActions);
         tasksTable.append(row);
         styleCheckboxIcon(doneIcon, element.completed);
         styleStatusLabel(statusLabel, element.completed);
@@ -226,7 +230,7 @@ const editTaskDate = (taskId) => {
         }
         
         localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
-        displayTasks();
+        saveCurrentOrder();
     }
 }
 
@@ -239,6 +243,56 @@ const taskDone = (taskId) => {
     }
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
     displayTasks();
+}
+
+function sortDates(asc = true) {
+    const tbody = document.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('.todo-items'));
+
+    const sortedRows = rows.sort((a, b) => {
+        const aDate = a.querySelector('.task-date').textContent;
+        const bDate = b.querySelector('.task-date').textContent;
+
+        const aDateObj = new Date(aDate);
+        const bDateObj = new Date(bDate);
+
+        if (aDateObj < bDateObj) return asc ? -1 : 1;
+        if (aDateObj > bDateObj) return asc ? 1 : -1;
+    });
+
+    while (tbody.firstChild) {
+        tbody.removeChild(tbody.firstChild);
+    }
+
+    sortedRows.forEach(row => {
+        tbody.appendChild(row);
+    });
+
+    const table = document.querySelector('table');
+    table.querySelectorAll('th').forEach(th => th.classList.remove("th-sort-acs", "th-sort-desc"));
+    table.querySelector(`th:nth-child(${3})`).classList.toggle("th-sort-asc", asc);
+    table.querySelector(`th:nth-child(${3})`).classList.toggle("th-sort-desc", !asc);
+}
+
+let currentSortDirection = true; 
+
+function handleDateHeaderClick() {
+    currentSortDirection = !currentSortDirection;
+    sortDates(currentSortDirection);
+}
+
+function saveCurrentOrder() {
+    const tbody = document.querySelector('.todo-tbody');
+    const rows = tbody.querySelectorAll('.todo-items');
+    const currentOrder = Array.from(rows).map(row => row.dataset.id);
+    const orderedTasks = [];
+    currentOrder.forEach(taskId => {
+        const task = taskLocalList.find(t => t.id === taskId);
+        if (task) orderedTasks.push(task);
+    });
+    
+    taskLocalList = orderedTasks;
+    localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
 }
 
 document.addEventListener('DOMContentLoaded', () => {
