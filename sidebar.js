@@ -23,7 +23,7 @@ const createSidebar = () => {
 
     const menuItems = [
         { id: 'add-task', text: 'add task', icon: 'images/add.png'},
-        { id: 'search-task', text: 'search task', icon: 'images/search.png' },
+        { id: 'search-task', text: 'search for tasks', icon: 'images/search.png' },
         { id: 'view-due-today', text: 'due today', icon: 'images/calendar_clock.png' },
         { id: 'view-upcoming', text: 'upcoming', icon: 'images/calendar_month.png' }, 
     ];
@@ -48,19 +48,55 @@ const createSidebar = () => {
     });
 
     nav.append(header, menuBar);
-
-    styleSidebar(nav);
-    styleSidebarHeader(header);
-    styleSidebarLogo(logo);
-    styleSideBarImg(logoImg);
-    styleSidebarMenu(menuBar);
-    const menuItemElements = nav.querySelectorAll('.sidebarMenuItem');
-    styleSidebarMenuItem(menuItemElements);
+    createMenuToggle();
     return nav;
 }
 
+const createMenuToggle = () => {
+    const menuToggle = document.createElement('button');
+    menuToggle.className = 'menu-toggle';
+    
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    svg.setAttribute('height', '24px');
+    svg.setAttribute('viewBox', '0 -960 960 960');
+    svg.setAttribute('width', '24px');
+    svg.setAttribute('fill', '#000000');
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z');
+    
+    svg.appendChild(path);
+    menuToggle.appendChild(svg);
+    
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    
+    document.body.prepend(overlay, menuToggle);
+    
+    menuToggle.addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+    });
+    
+    overlay.addEventListener('click', () => {
+        const sidebar = document.querySelector('.sidebar');
+        sidebar.classList.remove('active');
+        overlay.classList.remove('active');
+    });
+    
+}
+
+
 function addMenuItemEventListeners(menuItem, itemID){
     menuItem.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.overlay');
+            sidebar.classList.remove('active');
+            overlay.classList.remove('active');
+        }
         switch(itemID) {
             case 'add-task':
                 openAddTaskModal();
@@ -146,8 +182,6 @@ const openAddTaskModal = () => {
     const body = document.querySelector('body');
     body.append(modal);
     
-    styleModal(modal);
-    
     modal.style.display = 'block';
     
     cancelButton.addEventListener('click', closeModal);
@@ -187,7 +221,16 @@ const addTask = () => {
     document.querySelector("form").reset();
 }
 
+let searchVisible = JSON.parse(localStorage.getItem('searchVisible')) || false;
+
 const openSearchModal = () =>{
+    const existingSearch = document.querySelector('.inputGroup');
+    if (existingSearch) {
+        existingSearch.remove();
+        searchVisible = false;
+        localStorage.setItem('searchVisible', JSON.stringify(searchVisible));
+        return;
+    }
     const inputDiv = document.createElement('div');
     inputDiv.className = 'inputGroup';
 
@@ -207,6 +250,9 @@ const openSearchModal = () =>{
     inputSearch.addEventListener('input', function() {
         searchTasks(this.value);
     });
+
+    searchVisible = true;
+    localStorage.setItem('searchVisible', JSON.stringify(searchVisible));
 }
 
 function searchTasks(searchInpt) {
@@ -221,3 +267,12 @@ function searchTasks(searchInpt) {
         }
     });
 }
+
+// чтобы окно с поиском оставалось видимым после перезагрузки страницы (из localstorage подгружается статус)
+const restoreSearchState = () => {
+        if (searchVisible) {
+            openSearchModal();
+        }
+    }
+
+document.addEventListener('DOMContentLoaded', restoreSearchState);
