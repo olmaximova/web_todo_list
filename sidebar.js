@@ -24,8 +24,9 @@ const createSidebar = () => {
     const menuItems = [
         { id: 'add-task', text: 'add task', icon: 'images/add.png'},
         { id: 'search-task', text: 'search for tasks', icon: 'images/search.png' },
-        { id: 'view-due-today', text: 'due today', icon: 'images/calendar_clock.png' },
-        { id: 'view-upcoming', text: 'upcoming', icon: 'images/calendar_month.png' }, 
+        { id: 'view-due-today', text: 'tasks due today', icon: 'images/calendar_clock.png' },
+        { id: 'view-upcoming', text: 'upcoming tasks', icon: 'images/calendar_month.png' }, 
+        { id: 'view-expired', text: 'expired tasks', icon: 'images/timer_off.png'}
     ];
 
     menuItems.forEach(item => {
@@ -109,6 +110,9 @@ function addMenuItemEventListeners(menuItem, itemID){
                 break;
             case 'view-upcoming':
                 showUpcomingTasks();
+                break;
+            case 'view-expired':
+                showExpiredTasks();
                 break;
         }
     })
