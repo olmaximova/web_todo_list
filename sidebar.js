@@ -24,6 +24,7 @@ const createSidebar = () => {
     const menuItems = [
         { id: 'add-task', text: 'add task', icon: 'images/add.png'},
         { id: 'search-task', text: 'search for tasks', icon: 'images/search.png' },
+        { id: 'view-all', text: 'all tasks', icon: 'images/list.png'},
         { id: 'view-due-today', text: 'tasks due today', icon: 'images/calendar_clock.png' },
         { id: 'view-upcoming', text: 'upcoming tasks', icon: 'images/calendar_month.png' }, 
         { id: 'view-expired', text: 'expired tasks', icon: 'images/timer_off.png'}
@@ -105,14 +106,17 @@ function addMenuItemEventListeners(menuItem, itemID){
             case 'search-task':
                 openSearchModal();
                 break;
+            case 'view-all':
+                filterTasksByDate('view-all');
+                break;
             case 'view-due-today':
-                showDueTodayTasks();
+                filterTasksByDate('view-due-today');
                 break;
             case 'view-upcoming':
-                showUpcomingTasks();
+                filterTasksByDate('view-upcoming');
                 break;
             case 'view-expired':
-                showExpiredTasks();
+                filterTasksByDate('view-expired');
                 break;
         }
     })
@@ -277,6 +281,37 @@ const restoreSearchState = () => {
         if (searchVisible) {
             openSearchModal();
         }
-    }
+}
+
+function filterTasksByDate(filterType) {
+    const tasksTable = document.getElementById('todo-tbody');
+    const allRows = tasksTable.querySelectorAll('.todo-items');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // тут устанавливаем время на полночь, чтобы сравнивать только сами даты
+
+    allRows.forEach(row => {
+        const dateCell = row.querySelector('.task-date');
+        const taskDate = new Date(dateCell.textContent);
+        taskDate.setHours(0, 0, 0, 0); // тут тоже
+
+        let shouldShow = false;
+
+        switch(filterType) {
+            case 'view-all':
+                shouldShow = true; // надо показать все
+                break;
+            case 'view-expired':
+                shouldShow = taskDate < today; // expired значит показывам уже прошедшие даты
+                break;
+            case 'view-due-today':
+                shouldShow = taskDate.getTime() === today.getTime(); // due-today значит показываем задачи на сегодня 
+                break;
+            case 'view-upcoming': 
+                shouldShow = taskDate > today; // upcoming значит показываем задания последующих дат
+                break;
+        }
+        row.style.display = shouldShow ? '' : 'none'; // делаем так чтобы показыались только необходимые таски
+    });
+}
 
 document.addEventListener('DOMContentLoaded', restoreSearchState);
