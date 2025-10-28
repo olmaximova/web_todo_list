@@ -31,8 +31,7 @@ const loadElements = () => {
         addTask();
     });
 
-    body.append(main);
-    body.append(sidebar);
+    body.append(main, sidebar);
     main.append(section);
     section.append(h1, dateContainer, form, table);
     table.append(thead);

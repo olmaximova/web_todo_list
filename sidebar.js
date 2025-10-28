@@ -58,7 +58,7 @@ const createMenuToggle = () => {
     const menuToggle = document.createElement('button');
     menuToggle.className = 'menu-toggle';
     
-    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg'); // попробовала вставить svg вместо png
     svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     svg.setAttribute('height', '24px');
     svg.setAttribute('viewBox', '0 -960 960 960');
@@ -250,13 +250,22 @@ const openSearchModal = () =>{
     const searchIcon = document.createElement('img');
     searchIcon.src = 'images/search.png';
     
+    const cancelIcon = document.createElement('img');
+    cancelIcon.src = 'images/cancel.png';
+
     const table = document.querySelector('table');
 
     table.parentNode.insertBefore(inputDiv, table);
-    inputDiv.append(inputSearch, searchIcon);
+    inputDiv.append(inputSearch, searchIcon, cancelIcon);
 
     inputSearch.addEventListener('input', function() {
         searchTasks(this.value);
+    });
+
+    cancelIcon.addEventListener('click', function() {
+        inputDiv.remove();
+        searchVisible = false;
+        localStorage.setItem('searchVisible', JSON.stringify(searchVisible));
     });
 
     searchVisible = true;
