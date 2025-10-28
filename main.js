@@ -34,10 +34,7 @@ const loadElements = () => {
     body.append(main);
     body.append(sidebar);
     main.append(section);
-    section.append(h1);
-    section.append(dateContainer);
-    section.append(form);
-    section.append(table); 
+    section.append(h1, dateContainer, form, table);
     table.append(thead);
     thead.append(headerRow);
     const headers = ['Mark Done', 'Task', 'Date', 'Status', 'Actions'];
@@ -105,7 +102,7 @@ const displayTasks = () => {
         tasksTable.removeChild(tasksTable.firstChild);
     }
 
-    taskLocalList.forEach((element, index) => {
+    taskLocalList.forEach((element) => {
 
         const taskId = element.id;
 
