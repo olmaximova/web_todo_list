@@ -12,7 +12,7 @@ const createSidebar = () => {
     logoText.textContent = "ToDo List";
 
     const logoImg = document.createElement("img");
-    logoImg.src = "images/favicon.png";
+    logoImg.src = "images/favicon_png.png";
 
     logo.append(logoImg, logoText);
     header.appendChild(logo);
