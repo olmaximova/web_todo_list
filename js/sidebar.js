@@ -266,6 +266,7 @@ const openSearchModal = () =>{
         inputDiv.remove();
         searchVisible = false;
         localStorage.setItem('searchVisible', JSON.stringify(searchVisible));
+        displayTasks();
     });
 
     searchVisible = true;

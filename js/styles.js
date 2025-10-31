@@ -1,4 +1,14 @@
 const styleCheckboxIcon = (checkbox, isCompleted = false) => {
+    const screenWidth = window.innerWidth;
+    const isSmallScreen = screenWidth <= 600;
+    
+    const size = isSmallScreen ? '25px' : '32px';
+    const borderWidth = isSmallScreen ? '1px' : '1px';
+        
+    checkbox.style.width = size;
+    checkbox.style.height = size;
+    checkbox.style.borderWidth = borderWidth;
+
     if (isCompleted){
         checkbox.style.border = '1px solid #4caf50';
         checkbox.style.backgroundColor = '#e8f5e8';
@@ -9,12 +19,20 @@ const styleCheckboxIcon = (checkbox, isCompleted = false) => {
 }
 
 const styleStatusLabel = (label, isCompleted = false) => {
-    label.style.padding = '6px 12px';
-    label.style.borderRadius = '20px';
-    label.style.fontSize = '14px';
+    const screenWidth = window.innerWidth;
+    const isSmallScreen = screenWidth <= 600;
+    
+    const padding = isSmallScreen ? '4px 8px' : '6px 12px';
+    const fontSize = isSmallScreen ? '10px' : '12px';
+    const minWidth = isSmallScreen ? '70px' : '80px';
+    const borderRadius = isSmallScreen ? '15px' : '20px';
+
+    label.style.padding = padding;
+    label.style.borderRadius = borderRadius;
+    label.style.fontSize = fontSize;
     label.style.fontWeight = '600';
     label.style.display = 'inline-block';
-    label.style.minWidth = '80px';
+    label.style.minWidth = minWidth;
     label.style.textAlign = 'center';
     
     if (isCompleted){
