@@ -48,7 +48,7 @@ const createMenuItem = (element) => {
 
 const handleMenuItemClick = (item) => {
     if (window.innerWidth <= 768) {
-        closeSidebar();
+        closeToggleSidebar("close");
     }
     item.action();
 };
