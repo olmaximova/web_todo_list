@@ -364,6 +364,8 @@ const dragAndDrop = () => {
 const mobileDragAndDrop = () => {
     let draggedItem = null;
     let targetRow = null;
+    let dragStartTime = 0;
+    const LONG_PRESS_DURATION = 500;
 
     const resetDragState = () => {
         document.querySelectorAll("tr.todo-items").forEach((row) => {
@@ -379,13 +381,27 @@ const mobileDragAndDrop = () => {
     const taskRows = document.querySelectorAll("tr.todo-items");
 
     taskRows.forEach((row) => {
+        let longPressTimer;
+
         row.addEventListener("touchstart", (e) => {
-            draggedItem = row;
-            row.style.opacity = "0.7";
-            e.preventDefault();
+            if (e.target.closest('.task-actions, .task-done, .check-done, .task-edit, .task-delete')) {
+                return;
+            }
+
+            dragStartTime = Date.now();
+            longPressTimer = setTimeout(() => {
+                draggedItem = row;
+                row.style.opacity = '0.7';
+            }, LONG_PRESS_DURATION);
+
         });
 
         row.addEventListener("touchmove", (e) => {
+            if (longPressTimer && Date.now() - dragStartTime < LONG_PRESS_DURATION) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+                return;
+            }
             const touch = e.touches[0];
             const elementUnder = document.elementFromPoint(
                 touch.clientX,
@@ -414,7 +430,13 @@ const mobileDragAndDrop = () => {
         });
 
         row.addEventListener("touchend", () => {
+            clearTimeout(longPressTimer);
+            if (Date.now() - dragStartTime < LONG_PRESS_DURATION) {
+                return;
+            }
+
             if (draggedItem) {
+                clearTimeout(longPressTimer);
                 updateTasksOrder();
                 resetDragState();
             }
