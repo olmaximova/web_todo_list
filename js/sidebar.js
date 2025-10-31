@@ -90,7 +90,6 @@ const createMenuToggle = () => {
     
 }
 
-
 function addMenuItemEventListeners(menuItem, itemID){
     menuItem.addEventListener('click', () => {
         if (window.innerWidth <= 768) {
@@ -246,9 +245,6 @@ const openSearchModal = () =>{
     inputSearch.className = 'searchTask';
     inputSearch.type = 'search';
     inputSearch.placeholder = 'Search Your Task Here';
-
-    const searchIcon = document.createElement('img');
-    searchIcon.src = 'images/search.png';
     
     const cancelIcon = document.createElement('img');
     cancelIcon.src = 'images/cancel.png';
@@ -256,7 +252,7 @@ const openSearchModal = () =>{
     const table = document.querySelector('table');
 
     table.parentNode.insertBefore(inputDiv, table);
-    inputDiv.append(inputSearch, searchIcon, cancelIcon);
+    inputDiv.append(inputSearch, cancelIcon);
 
     inputSearch.addEventListener('input', function() {
         searchTasks(this.value);
