@@ -34,7 +34,7 @@ const loadElements = () => {
     body.append(main, sidebar);
     main.append(section);
     section.append(h1, dateContainer, form, table);
-    table.append(thead);
+    table.append(thead, tbody);
     thead.append(headerRow);
     const headers = ['Mark Done', 'Task', 'Date', 'Status', 'Actions'];
     headers.forEach(header => {
@@ -67,7 +67,6 @@ const loadElements = () => {
 
         headerRow.append(th);
     });
-    table.append(tbody); 
 }
 
 const filterTasks = (event) => {
@@ -108,6 +107,7 @@ const displayTasks = () => {
         const row = document.createElement('tr');
         row.className = 'todo-items';
         row.dataset.id = element.id;
+        row.draggable = true;
 
         const taskText = document.createElement('td');
         taskText.className = 'task-text';
@@ -278,7 +278,7 @@ function handleDateHeaderClick() {
 }
 
 function saveCurrentOrder() {
-    const tbody = document.querySelector('.todo-tbody');
+    const tbody = document.querySelector('#todo-tbody');
     const rows = tbody.querySelectorAll('.todo-items');
     const currentOrder = Array.from(rows).map(row => row.dataset.id);
     const orderedTasks = [];
@@ -291,7 +291,73 @@ function saveCurrentOrder() {
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
 }
 
+const dragAndDrop = () => {
+    let draggedItem = null;
+
+    const taskRows = document.querySelectorAll('tr.todo-items');
+    
+    taskRows.forEach(row => {
+        row.setAttribute('draggable', 'true');
+        
+        row.addEventListener('dragstart', (e) => {
+            draggedItem = row;
+            row.style.opacity = '0.5';
+            e.dataTransfer.effectAllowed = 'move';
+        });
+
+        row.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            row.style.backgroundColor = '#D3D3D3';
+        });
+
+        row.addEventListener('dragleave', () => {
+            row.style.backgroundColor = '';
+        });
+
+        row.addEventListener('drop', (e) => {
+            e.preventDefault();
+            
+            if (draggedItem && draggedItem !== row) {
+                row.style.backgroundColor = '';
+                const temp = document.createElement('tr');
+                row.parentNode.insertBefore(temp, row);
+                row.parentNode.insertBefore(row, draggedItem);
+                row.parentNode.insertBefore(draggedItem, temp);
+                row.parentNode.removeChild(temp);
+                
+                updateTasksOrder();
+            }
+        });
+
+        row.addEventListener('dragend', () => {
+            if (draggedItem) {
+                draggedItem.style.opacity = '';
+            }
+            draggedItem = null;
+        });
+    });
+};
+
+const updateTasksOrder = () => {
+    const table = document.querySelector('#todo-tbody');
+    const rows = table.querySelectorAll('tr.todo-items');
+    
+    const newOrder = [];
+    rows.forEach(row => {
+        const taskId = row.dataset.id;
+        const task = taskLocalList.find(t => t.id === taskId); 
+        if (task) {
+            newOrder.push(task);
+        }
+    });
+    
+    taskLocalList.splice(0, taskLocalList.length, ...newOrder);
+    saveCurrentOrder();
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     loadElements();
     displayTasks();
+    dragAndDrop();
 });
