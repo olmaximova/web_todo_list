@@ -187,6 +187,9 @@ const displayTasks = () => {
         tasksTable.append(row);
         styleCheckboxIcon(doneIcon, element.completed);
         styleStatusLabel(statusLabel, element.completed);
+
+        dragAndDrop();
+        mobileDragAndDrop();
     });
 }
 
@@ -195,7 +198,6 @@ const deleteTask = (taskId) => {
     localStorage.setItem('taskLocalList', JSON.stringify(taskLocalList));
     displayTasks();
 }
-
 
 const editTaskDate = (taskId) => {
     const taskIndex = taskLocalList.findIndex(task => task.id === taskId);
@@ -339,6 +341,68 @@ const dragAndDrop = () => {
     });
 };
 
+const mobileDragAndDrop = () => {
+    let draggedItem = null;
+    let targetRow = null;
+
+    const resetDragState = () => {
+        document.querySelectorAll('tr.todo-items').forEach(row => {
+            row.style.backgroundColor = '';
+        });
+        if (draggedItem) {
+            draggedItem.style.opacity = '';
+            draggedItem = null;
+        }
+        targetRow = null;
+    };
+
+    const taskRows = document.querySelectorAll('tr.todo-items');
+    
+    taskRows.forEach(row => {
+        row.addEventListener('touchstart', (e) => {
+            draggedItem = row;
+            row.style.opacity = '0.7';
+            e.preventDefault();
+        });
+
+        row.addEventListener('touchmove', (e) => {
+            
+            const touch = e.touches[0];
+            const elementUnder = document.elementFromPoint(touch.clientX, touch.clientY);
+            const newTargetRow = elementUnder?.closest('tr.todo-items');
+
+            if (targetRow && targetRow !== newTargetRow) {
+                targetRow.style.backgroundColor = '';
+            }
+            
+            if (newTargetRow && newTargetRow !== draggedItem) {
+                targetRow = newTargetRow;
+                
+                const container = draggedItem.parentNode;
+                container.insertBefore(draggedItem, newTargetRow);
+            } else if (!newTargetRow) {
+
+                const container = draggedItem.parentNode;
+                const allRows = container.querySelectorAll('tr.todo-items');
+                const lastRow = allRows[allRows.length - 1];
+                
+                if (draggedItem !== lastRow) {
+                    container.appendChild(draggedItem);
+                }
+            }
+        });
+
+        row.addEventListener('touchend', () => {
+            if (draggedItem) {
+                updateTasksOrder();
+                resetDragState();
+            }
+        });
+
+        row.addEventListener('touchcancel', resetDragState);
+    });
+};
+
 const updateTasksOrder = () => {
     const table = document.querySelector('#todo-tbody');
     const rows = table.querySelectorAll('tr.todo-items');
@@ -359,5 +423,4 @@ const updateTasksOrder = () => {
 document.addEventListener('DOMContentLoaded', () => {
     loadElements();
     displayTasks();
-    dragAndDrop();
 });
