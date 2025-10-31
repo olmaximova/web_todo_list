@@ -78,22 +78,23 @@ const createMenuToggle = () => {
 
     document.body.prepend(overlay, menuToggle);
 
-    menuToggle.addEventListener("click", toggleSidebar);
-    overlay.addEventListener("click", closeSidebar);
+    menuToggle.addEventListener("click", () => closeToggleSidebar("open"));
+    overlay.addEventListener("click", () => closeToggleSidebar("close"));
 };
 
-const closeSidebar = () => {
+const closeToggleSidebar = (type) => {
     const sidebar = document.querySelector(".sidebar");
     const overlay = document.querySelector(".overlay");
-    sidebar.classList.remove("active");
-    overlay.classList.remove("active");
-};
-
-const toggleSidebar = () => {
-    const sidebar = document.querySelector(".sidebar");
-    const overlay = document.querySelector(".overlay");
-    sidebar.classList.toggle("active");
-    overlay.classList.toggle("active");
+    switch (type) {
+        case "close":
+            sidebar.classList.remove("active");
+            overlay.classList.remove("active");
+            break;
+        case "open":
+            sidebar.classList.toggle("active");
+            overlay.classList.toggle("active");
+            break;
+    }
 };
 
 const createForm = () => {
