@@ -1,3 +1,35 @@
+const HEADERS = ['Mark Done', 'Task', 'Date', 'Status', 'Actions'];
+const STATUS_OPTIONS = [
+    {value: 'all', text: 'All'},
+    {value: 'pending', text: 'Pending'},
+    {value: 'completed', text: 'Completed'}
+];
+
+const createHeader = (header) => {
+    const th = document.createElement('th');
+    th.textContent = header;
+    if (header == 'Status'){
+        const select = document.createElement('select');
+        select.className = 'selectFilter';
+        STATUS_OPTIONS.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            select.appendChild(option);
+        });
+        select.addEventListener('change', filterTasks);
+        th.append(select);
+    }
+
+    if (header === 'Date'){
+        th.className = 'sortable-header';    
+        th.addEventListener('click', () => {
+            handleDateHeaderClick();
+        });
+    } 
+    return th;
+}
+
 const loadElements = () => {
     const main = document.createElement('main');
     const body = document.querySelector('body');
@@ -31,42 +63,13 @@ const loadElements = () => {
         addTask();
     });
 
+    HEADERS.forEach(header => headerRow.append(createHeader(header)));
+
     body.append(main, sidebar);
-    main.append(section);
+    main.appendChild(section);
     section.append(h1, dateContainer, form, table);
     table.append(thead, tbody);
-    thead.append(headerRow);
-    const headers = ['Mark Done', 'Task', 'Date', 'Status', 'Actions'];
-    headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        if (header == 'Status'){
-            const select = document.createElement('select');
-            select.className = 'selectFilter';
-            const options = [
-                {value: 'all', text: 'All'},
-                {value: 'pending', text: 'Pending'},
-                {value: 'completed', text: 'Completed'}
-            ]
-            options.forEach(opt => {
-                const option = document.createElement('option');
-                option.value = opt.value;
-                option.textContent = opt.text;
-                select.appendChild(option);
-            });
-            select.addEventListener('change', filterTasks);
-            th.append(select);
-        }
-
-        if (header === 'Date'){
-            th.className = 'sortable-header';    
-            th.addEventListener('click', () => {
-                handleDateHeaderClick();
-            });
-        } 
-
-        headerRow.append(th);
-    });
+    thead.appendChild(headerRow);
 }
 
 const filterTasks = (event) => {
@@ -92,6 +95,93 @@ const filterTasks = (event) => {
     });
 };
 
+const createIconButton = (className, iconSrc, clickHandler) => {
+    const button = document.createElement('button');
+    button.className =  className;
+    const img = document.createElement('img');
+    img.src = iconSrc;
+    button.appendChild(img);
+    button.addEventListener('click', clickHandler);
+    return button;
+};
+
+const createTasks = (element) => {
+    const taskId = element.id;
+
+    const row = document.createElement('tr');
+    row.className = 'todo-items';
+    row.dataset.id = element.id;
+    row.draggable = true;
+
+    const taskText = document.createElement('td');
+    taskText.className = 'task-text';
+    taskText.setAttribute('for', taskId)
+
+    const textArea = document.createElement('textarea');
+    textArea.className = 'task-area';
+    textArea.disabled = true;
+    textArea.textContent = element.task;
+    textArea.dataset.id = taskId;
+
+    if (element.completed) {
+        textArea.style.textDecoration = 'solid line-through black 2px';
+        textArea.style.color = "grey"
+    } 
+    
+    const taskDate = document.createElement('td');
+    taskDate.className = 'task-date';
+    taskDate.setAttribute('for', taskId)
+    taskDate.textContent = element.date;
+    taskDate.dataset.id = taskId;
+
+    const taskStatus = document.createElement('td');
+    taskStatus.className = 'task-status';
+
+    const statusLabel = document.createElement('label');
+    statusLabel.setAttribute('for', taskId);
+    statusLabel.textContent = element.completed ? 'Completed' : 'Pending'
+
+    const taskActions = document.createElement('td');
+    taskActions.className = 'task-actions';
+
+    const deleteIcon = createIconButton('task-delete', 'images/delete.png', () => deleteTask(element.id));
+    const editIcon = createIconButton('task-edit', 'images/edit.png',  () => editTaskDate(element.id))
+
+    const taskDoneTable = document.createElement('td');
+    taskDoneTable.className = 'task-done';
+
+    const inputCheckBox = document.createElement('input');
+    inputCheckBox.setAttribute('type', 'checkbox')
+    inputCheckBox.setAttribute('id', taskId);
+    inputCheckBox.className = 'checkbox';
+    inputCheckBox.checked = element.completed;
+    inputCheckBox.style.display = 'none'; 
+
+    inputCheckBox.addEventListener('change', () => taskDone(element.id))
+
+    const doneIcon = document.createElement('label');
+    doneIcon.setAttribute('for', taskId);
+    const doneImg = document.createElement('img');
+    doneIcon.className = 'check-done';
+    doneImg.src = 'images/done.png';
+
+    if (!element.completed) {
+        doneImg.style.display = 'none';
+    } 
+    
+    taskText.appendChild(textArea);
+    taskStatus.appendChild(statusLabel);
+    doneIcon.appendChild(doneImg);
+    taskDoneTable.append(inputCheckBox, doneIcon);
+    taskActions.append(editIcon, deleteIcon);
+
+    row.append(taskDoneTable, taskText, taskDate, taskStatus,taskActions);
+    styleCheckboxIcon(doneIcon, element.completed);
+    styleStatusLabel(statusLabel, element.completed);
+
+    return row;
+}
+
 const displayTasks = () => {
     const tasksTable = document.querySelector('#todo-tbody');
 
@@ -101,96 +191,12 @@ const displayTasks = () => {
     }
 
     taskLocalList.forEach((element) => {
-
-        const taskId = element.id;
-
-        const row = document.createElement('tr');
-        row.className = 'todo-items';
-        row.dataset.id = element.id;
-        row.draggable = true;
-
-        const taskText = document.createElement('td');
-        taskText.className = 'task-text';
-        taskText.setAttribute('for', taskId)
-
-        const textArea = document.createElement('textarea');
-        textArea.className = 'task-area';
-        textArea.disabled = true;
-        textArea.textContent = element.task;
-        textArea.dataset.id = taskId;
-
-        if (element.completed) {
-            textArea.style.textDecoration = 'solid line-through black 2px';
-            textArea.style.color = "grey"
-        } 
-        
-        const taskDate = document.createElement('td');
-        taskDate.className = 'task-date';
-        taskDate.setAttribute('for', taskId)
-        taskDate.textContent = element.date;
-        taskDate.dataset.id = taskId;
-
-        const taskStatus = document.createElement('td');
-        taskStatus.className = 'task-status';
-
-        const statusLabel = document.createElement('label');
-        statusLabel.setAttribute('for', taskId);
-        statusLabel.textContent = element.completed ? 'Completed' : 'Pending'
-
-        const taskActions = document.createElement('td');
-        taskActions.className = 'task-actions';
-
-        const deleteIcon = document.createElement('button');
-        const deleteImg = document.createElement('img');
-        deleteIcon.className = 'task-delete';
-        deleteImg.src = 'images/delete.png';
-        
-        deleteIcon.addEventListener('click', () => deleteTask(element.id));
-
-        const editIcon = document.createElement('button');
-        const editImg = document.createElement('img');
-        editIcon.className = 'task-edit';
-        editImg.src = 'images/edit.png';
-        
-        editIcon.addEventListener('click', () => editTaskDate(element.id));
-
-        const taskDoneTable = document.createElement('td');
-        taskDoneTable.className = 'task-done';
-
-        const inputCheckBox = document.createElement('input');
-        inputCheckBox.setAttribute('type', 'checkbox')
-        inputCheckBox.setAttribute('id', taskId);
-        inputCheckBox.className = 'checkbox';
-        inputCheckBox.checked = element.completed;
-        inputCheckBox.style.display = 'none'; 
-
-        inputCheckBox.addEventListener('change', () => taskDone(element.id))
-
-        const doneIcon = document.createElement('label');
-        doneIcon.setAttribute('for', taskId);
-        const doneImg = document.createElement('img');
-        doneIcon.className = 'check-done';
-        doneImg.src = 'images/done.png';
-
-        if (!element.completed) {
-            doneImg.style.display = 'none';
-        } 
-
-        taskText.append(textArea);
-        taskStatus.append(statusLabel);
-        deleteIcon.append(deleteImg);
-        editIcon.append(editImg);
-        doneIcon.append(doneImg);
-        taskDoneTable.append(inputCheckBox, doneIcon);
-        taskActions.append(editIcon, deleteIcon);
-        row.append(taskDoneTable, taskText, taskDate, taskStatus,taskActions);
+        const row = createTasks(element);
         tasksTable.append(row);
-        styleCheckboxIcon(doneIcon, element.completed);
-        styleStatusLabel(statusLabel, element.completed);
-
-        dragAndDrop();
-        mobileDragAndDrop();
     });
+
+    dragAndDrop();
+    mobileDragAndDrop();
 }
 
 const deleteTask = (taskId) => {
