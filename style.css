@@ -31,6 +31,7 @@ main{
   padding: clamp(15px, 3vw, 25px);
   box-sizing: border-box;
   margin: 0;
+  overflow-x: auto;
 }
 
 h1{
@@ -135,13 +136,56 @@ td:nth-child(5) {
   text-align: center;
 }
 
-label{
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  display: inline-block;
-  text-align: center;
+.task-staus label{
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.task-status label.completed {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #4caf50;
+}
+.task-status label:not(.completed) {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.check-done {
+    width: 32px;
+    height: 32px;
+    border: 1px solid grey;
+    background-color: transparent;
+    box-sizing: border-box;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.check-done.completed {
+    border: 1px solid #4caf50;
+    background-color: #e8f5e8;
+}
+
+.check-done.completed::after {
+    color: #4caf50;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.done-icon {
+    display: none;
 }
 
 tr.hide {
@@ -441,8 +485,125 @@ tr.hide {
     background-color: #d5d4d4;
 }
 
-@media (max-width: 1100px), (max-height: 500px) and (orientation: landscape) {
-  .modalInner {
+ @media (max-width: 1100px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    main {
+        width: 100%;
+        margin-left: 0;
+        padding-top: clamp(50px, 8vw, 70px);
+    }
+
+    .table-container {
+        margin-top: clamp(10px, 2vw, 20px);
+    }
+
+    th, td {
+        padding: clamp(8px, 1.5vw, 12px) clamp(6px, 1vw, 8px);
+        font-size: clamp(11px, 1.5vw, 13px);
+    }
+
+    .task-actions {
+        flex-direction: row;
+        gap: clamp(2px, 1vw, 4px);
+    }
+}
+
+ @media (max-width: 768px) {
+    .taskSection {
+        padding: clamp(8px, 2vw, 12px);
+        gap: clamp(10px, 2vw, 15px);
+    }
+
+    .form-buttons {
+        justify-content: stretch;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .inputGroup {
+        max-width: 100%;
+    }
+
+    table {
+        min-width: 500px;
+    }
+
+
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(2), td:nth-child(2),
+    th:nth-child(3), td:nth-child(3),
+    th:nth-child(4), td:nth-child(4),
+    th:nth-child(5), td:nth-child(5) {
+        width: 100%;
+        min-width: auto;
+    }
+    .check-done {
+        width: 25px;
+        height: 25px;
+    }
+    
+    .task-status label {
+        padding: 4px 8px;
+        font-size: 10px;
+        min-width: 70px;
+        border-radius: 15px;
+    }
+    
+    .check-done.completed::after {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modalInner {
+        width: 95%;
+        margin: 10px auto;
+        top: 0;
+        transform: none;
+        max-height: calc(100vh - 20px);
+    }
+
+    .sidebar {
+        width: 85vw;
+    }
+
+    .task-actions {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .task-delete,
+    .task-edit {
+        width: 26px;
+        height: 26px;
+    }
+
+    #task-form {
+        gap: 10px;
+    }
+
+    .formElements {
+        gap: 4px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .modalInner {
     margin: 5% auto;
     width: 95%;
     max-height: 90vh;
@@ -467,155 +628,4 @@ tr.hide {
     font-size: 13px;
     min-width: 80px;
   }
-  
-  .taskSection {
-    padding: 10px;
-    gap: 15px;
-    min-height: auto;
-  }
-  
-  h1 {
-    font-size: clamp(20px, 4vw, 30px);
-    margin: 5px 0;
-  }
-  
-  .taskSection span {
-    padding: 8px 0;
-    font-size: 14px;
-  }
-  
-  table {
-    margin-top: 10px;
-    display: block;
-    overflow-x: auto;
-    font-size: 12px;
-  }
-  
-  th, td {
-    padding: 6px 4px;
-    font-size: 11px;
-    white-space: nowrap;
-    min-width: 60px;
-  }
-  
-  .task-area {
-    font-size: 12px;
-    padding: 4px;
-  }
-  
-  .task-date {
-    font-size: 11px;
-  }
-  
-  .check-done {
-    width: 25px;
-    height: 25px;
-  }
-  
-  .check-done img {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .task-delete, .task-edit {
-    width: 28px;
-    height: 28px;
-  }
-  
-  .task-delete img, .task-edit img {
-    width: 14px;
-    height: 14px;
-  }
-  
-  .task-status label {
-    padding: 4px 8px;
-    font-size: 10px;
-    min-width: 70px;
-  }
-  
-  .menu-toggle {
-    top: 10px;
-    left: 10px;
-    width: 35px;
-    height: 35px;
-    font-size: 18px;
-    display: flex;
-  }
-  
-  .sidebar {
-    transform: translateX(-100%);
-  }
-
-  .sidebar.active {
-    transform: translateX(0);
-  }
-      
-  main {
-    width: 100%;
-    margin-left: 0;
-  }
-  
-  .overlay.active {
-    display: block;
-  }
-} 
-@media (max-height: 500px) and (orientation: landscape) {
-    .modalInner {
-      margin: 2% auto;
-      max-height: 96vh;
-    }
-    
-    #task-form {
-      padding: 12px;
-      gap: 10px;
-    }
-    
-    .formElements {
-      gap: 5px;
-    }
-    
-    #inputTask, #inputDate {
-      padding: 8px 12px;
-      font-size: 13px;
-    }
-    
-    .form-buttons {
-      padding-top: 10px;
-      margin-top: 0;
-    }
-    
-    .btn-primary, .btn-secondary {
-      padding: 8px 16px;
-      font-size: 12px;
-    }
-    
-    .taskSection {
-      padding: 8px;
-      gap: 10px;
-    }
-    
-    h1 {
-      margin: 3px 0;
-      font-size: 18px;
-    }
-    
-    .taskSection span {
-      padding: 5px 0;
-      font-size: 12px;
-    }
-    
-    table {
-      margin-top: 5px;
-    }
-    
-    th, td {
-      padding: 4px 3px;
-      font-size: 10px;
-    }
-    
-    .task-area {
-      font-size: 11px;
-      padding: 3px;
-    }
-    
 }

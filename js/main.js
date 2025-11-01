@@ -168,8 +168,17 @@ const createTasks = (element) => {
     const doneImg = document.createElement("img");
     doneIcon.className = "check-done";
     doneImg.src = "images/done.png";
+    doneImg.className = "done-icon";
 
-    if (!element.completed) {
+    if (element.completed) {
+        statusLabel.classList.add('completed');
+    }
+
+    if (element.completed) {
+        doneIcon.classList.add('completed');
+        doneImg.style.display = "block";
+    } else {
+        doneIcon.classList.remove('completed');
         doneImg.style.display = "none";
     }
 
@@ -180,8 +189,6 @@ const createTasks = (element) => {
     taskActions.append(editIcon, deleteIcon);
 
     row.append(taskDoneTable, taskText, taskDate, taskStatus, taskActions);
-    styleCheckboxIcon(doneIcon, element.completed);
-    styleStatusLabel(statusLabel, element.completed);
 
     return row;
 };
