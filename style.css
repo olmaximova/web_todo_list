@@ -1,6 +1,608 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     text-decoration: none;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    width: calc(100% - 250px);
+    min-height: 100vh;
+    align-items: flex-start;
+    margin-left: 250px;
+    box-sizing: border-box;
+}
+
+.taskSection {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: clamp(15px, 3vw, 25px);
+    box-sizing: border-box;
+    margin: 0;
+    overflow-x: auto;
+}
+
+h1 {
+    text-transform: uppercase;
+    font-size: 35px;
+    text-align: center;
+    margin: 10px 0;
+    font-weight: 800;
+}
+
+.taskSection span {
+    font-weight: 600;
+    text-align: center;
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 14px;
+}
+
+th {
+    padding: 16px 12px;
+    text-align: center;
+    border-bottom: 2px solid #d7d7d7;
+    font-weight: 700;
+    font-size: 14px;
+    background-color: #f8f9fa;
+}
+
+td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #d7d7d7;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+th:nth-child(1),
+td:nth-child(1) {
+    width: 8%;
+    min-width: 50px;
+}
+
+th:nth-child(2),
+td:nth-child(2) {
+    width: 40%;
+    min-width: 150px;
+}
+
+th:nth-child(3),
+td:nth-child(3) {
+    width: 20%;
+    min-width: 100px;
+}
+
+th:nth-child(4),
+td:nth-child(4) {
+    width: 12%;
+    min-width: 80px;
+}
+
+th:nth-child(5),
+td:nth-child(5) {
+    width: 10%;
+    min-width: 100px;
+}
+
+.task-area {
+    width: 100%;
+    border: none;
+    resize: none;
+    text-align: center;
+    padding: 8px;
+    box-sizing: border-box;
+    font-size: 18px;
+    color: black;
+}
+
+.task-area:enabled {
+    border-radius: 4px;
+    border: 1px solid #858585;
+}
+
+.task-date {
+    font-size: 14px;
+}
+
+.date-to-edit {
+    padding: 6px 8px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.task-status label {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.task-status label.completed {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #4caf50;
+}
+
+.task-status label:not(.completed) {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffc107;
+}
+
+.check-done {
+    width: 32px;
+    height: 32px;
+    border: 1px solid grey;
+    background-color: transparent;
+    box-sizing: border-box;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.check-done.completed {
+    border: 1px solid #4caf50;
+    background-color: #e8f5e8;
+}
+
+.check-done.completed::after {
+    color: #4caf50;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.done-icon {
+    display: none;
+}
+
+tr.hide {
+    display: none;
+}
+
+.task-delete,
+.task-edit {
+    margin: 0 2px;
+    background: none;
+    border: 1px solid #d7d7d7;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    padding: 0;
+}
+
+.task-delete img,
+.task-edit img {
+    width: 16px;
+    height: 16px;
+}
+
+.task-done button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.check-done img {
+    width: 18px;
+    height: 18px;
+}
+
+.inputGroup {
+    position: relative;
+    margin: 20px 0;
+    width: 100%;
+    max-width: 500px;
+}
+
+.searchTask {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    border: 2px solid #d7d7d7;
+    border-radius: 25px;
+    font-size: 16px;
+    background: #ffffff;
+}
+
+.searchTask:focus {
+    outline: none;
+}
+
+.searchTask::placeholder {
+    color: #9ca3af;
+}
+
+.inputGroup img {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.inputGroup img[src*="cancel.png"] {
+    right: 15px;
+}
+
+.addTaskModal {
+    display: none;
+    position: fixed;
+    z-index: 1003;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(2px);
+}
+
+.modalInner {
+    background: white;
+    margin: 10% auto;
+    padding: 0;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 450px;
+    overflow: hidden;
+}
+
+.modalInner h2 {
+    background: #d7d7d7;
+    margin: 0;
+    padding: 20px;
+    text-align: center;
+    font-size: 25px;
+    font-weight: 600;
+}
+
+#task-form {
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.formElements {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formElements label {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+#inputTask,
+#inputDate {
+    padding: 12px 16px;
+    border: 2px solid #d7d7d7;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.form-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 10px;
+    padding-top: 20px;
+}
+
+.btn-primary {
+    padding: 12px 24px;
+    background: #d7d7d7;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.btn-secondary {
+    padding: 12px 24px;
+    background: #edeeee;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background: #F7F7F7;
+    z-index: 1002;
+}
+
+.sidebarHeader {
+    padding: 15px;
+    border-bottom: 1px solid #d7d7d7;
+}
+
+.sidebarLogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.sidebarLogo img {
+    width: 40px;
+    height: 40px;
+}
+
+.sidebarMenu {
+    padding: 20px 0;
+}
+
+.sidebarMenuItem {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    cursor: pointer;
+    gap: 12px;
+    text-transform: capitalize;
+}
+
+.sidebarMenuItem:hover {
+    background-color: #e8f5e8;
+}
+
+.sidebarMenuItem .menuIcon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.7;
+}
+
+.menuText {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.selectFilter {
+    padding: 5px;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.selectFilter:focus {
+    outline: none;
+}
+
+.menu-toggle {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1001;
+    background: #F7F7F7;
+    border: 1px solid #d7d7d7;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}
+
+.sortable-header {
+    cursor: pointer;
+    position: relative;
+}
+
+.th-sort-asc::after {
+    content: '↑';
+    margin-left: 5px;
+    font-size: 12px;
+    color: black;
+}
+
+.th-sort-desc::after {
+    content: '↓';
+    margin-left: 5px;
+    font-size: 12px;
+    color: black;
+}
+
+.sortable-header:hover {
+    background-color: #d5d4d4;
+}
+
+@media (max-width: 1100px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    main {
+        width: 100%;
+        margin-left: 0;
+        padding-top: clamp(50px, 8vw, 70px);
+    }
+
+    .table-container {
+        margin-top: clamp(10px, 2vw, 20px);
+    }
+
+    th,
+    td {
+        padding: clamp(8px, 1.5vw, 12px) clamp(6px, 1vw, 8px);
+        font-size: clamp(11px, 1.5vw, 13px);
+    }
+}
+
+@media (max-width: 768px) {
+    .taskSection {
+        padding: clamp(8px, 2vw, 12px);
+        gap: clamp(10px, 2vw, 15px);
+    }
+
+    .form-buttons {
+        justify-content: stretch;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        flex: 1;
+        min-width: auto;
+    }
+
+    .inputGroup {
+        max-width: 100%;
+    }
+
+    table {
+        min-width: 500px;
+    }
+
+
+    th:nth-child(1),
+    td:nth-child(1),
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(3),
+    td:nth-child(3),
+    th:nth-child(4),
+    td:nth-child(4),
+    th:nth-child(5),
+    td:nth-child(5) {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .check-done {
+        width: 25px;
+        height: 25px;
+    }
+
+    .task-status label {
+        padding: 4px 8px;
+        font-size: 10px;
+        min-width: 70px;
+        border-radius: 15px;
+    }
+
+    .check-done.completed::after {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modalInner {
+        width: 95%;
+        margin: 10px auto;
+        top: 0;
+        transform: none;
+        max-height: calc(100vh - 20px);
+    }
+
+    .sidebar {
+        width: 85vw;
+    }
+
+    .task-delete,
+    .task-edit {
+        width: 26px;
+        height: 26px;
+    }
+
+    #task-form {
+        gap: 10px;
+    }
+
+    .formElements {
+        gap: 4px;
+    }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+    .modalInner {
+        margin: 5% auto;
+        width: 95%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    #task-form {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .form-buttons {
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 5px;
+        padding-top: 15px;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        padding: 10px 20px;
+        font-size: 13px;
+        min-width: 80px;
+    }
 }
