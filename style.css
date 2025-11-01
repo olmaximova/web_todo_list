@@ -51,14 +51,6 @@ h1 {
     font-size: 14px;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    border-radius: 8px;
-    overflow: hidden;
-}
-
 th {
     padding: 16px 12px;
     text-align: center;
@@ -136,7 +128,7 @@ td:nth-child(5) {
     text-align: center;
 }
 
-.task-staus label {
+.task-status label {
     padding: 6px 12px;
     border-radius: 20px;
     font-size: 12px;
@@ -191,24 +183,6 @@ td:nth-child(5) {
 
 tr.hide {
     display: none;
-}
-
-.task-status label {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-block;
-    min-width: 80px;
-    text-align: center;
-}
-
-.task-actions button {
-    display: inline-flex;
-    gap: 8px;
-    justify-content: center;
-    align-items: center;
-    margin: 0 2px;
 }
 
 .task-delete,
@@ -518,11 +492,6 @@ tr.hide {
         padding: clamp(8px, 1.5vw, 12px) clamp(6px, 1vw, 8px);
         font-size: clamp(11px, 1.5vw, 13px);
     }
-
-    .task-actions {
-        flex-direction: row;
-        gap: clamp(2px, 1vw, 4px);
-    }
 }
 
 @media (max-width: 768px) {
@@ -592,11 +561,6 @@ tr.hide {
 
     .sidebar {
         width: 85vw;
-    }
-
-    .task-actions {
-        flex-direction: column;
-        gap: 2px;
     }
 
     .task-delete,
